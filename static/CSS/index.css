@@ -26,14 +26,13 @@ body{
     height: 500px;
     overflow-y: scroll;
     border-radius: 10px;
-    margin: 20px auto;
+    margin-bottom: 10px;
     margin-top: 30px;
     background-color: #fff;
 }
 
 .sect_controller{
-    background-color: gray;
-    height: 500px;
+    overflow-y: scroll;
 }
 table{
     table-layout: fixed;
@@ -208,8 +207,20 @@ td{
 .y_30{top: calc(30*30px + 20px);}
 
 .resizer{
-    background-color: blue;
-    height: 40px;
+    height: 30px;
     cursor: ns-resize;
     user-select: none;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-content: flex-start;
+}
+
+.resizer_icon{
+    width: 46px;
+    height: 6px;
+    border-radius: 10px;
+    background-color: #adadad;
+    display: inline-block;
+    /* margin: auto; */
 }
