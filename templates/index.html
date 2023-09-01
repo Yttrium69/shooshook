@@ -11,12 +11,15 @@
     <script src="../static/JS/index.js"></script>
     <title>슈슉시간표</title>
 </head>
+<nav>
+    <span>슈슉시간표</span>
+</nav>
 <body>
     <div class="page_index">
         <div class="sect_table">
             <table class="table_1">
                 <thead>
-                        <th class="period week"></th>
+                        <th class="period"></th>
                         <th class="week">월</th>
                         <th class="week">화</th>
                         <th class="week">수</th>
@@ -56,7 +59,18 @@
             <span class="resizer_icon"></span>
         </div>
         <div class="sect_controller">
-sdfsdfsdfsdfsdfasd
+            <form>
+                <input maxlength="10" placeholder="수업 이름을 입력하세요." name="subject" class="subject">
+                {% set colors = ["blue", "coral", "purple", "green", "gray"] %}
+                <div class="color_container">
+                    {% for color in colors %}
+                    <span class="{{color}} color_select"></span>
+                    {% endfor %}
+                </div>
+                <div class="cards_container">
+
+                </div>
+            </form>
         </div>
     </div>
     
