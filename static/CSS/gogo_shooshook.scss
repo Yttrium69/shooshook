@@ -1,5 +1,59 @@
-$red: #0026ff;
+$background_gray: #F6F6FB;
+$border_gray: #D0D3E2 solid 1px;
+$page_width: 100vw;
+$time_block_height: 30px;
+$text_gray: #75787b;
+$text_black: #353B47;
 
-.sect_controller{
-    color: $red; 
+*{
+    margin: 0;
+    padding: 0;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 400;
+    letter-spacing: -0.5px;
+    color: $text_black;
+}
+
+body{
+    background-color: $background_gray;
+    overflow: hidden;
+}
+
+.page_index{
+    width: $page_width;
+    margin: auto;
+}
+
+.sect_table{
+    width: 100%;
+    .table_1{
+        width: 90%;
+        max-width: $page_width;
+        margin: auto;
+        border: $border_gray;
+        border-collapse: collapse;
+
+        th, td{
+            border: $border_gray;
+        }
+        .week{
+            height: 16px;
+            font-size: 10px;
+            color: $text_gray;
+        }
+        .period{
+            width: 16px;
+            font-size: 10px;
+            vertical-align:top;
+            color: $text_gray;
+        }
+        .time_block{
+            height: $time_block_height;
+
+        }
+
+
+    }
 }

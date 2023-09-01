@@ -1,5 +1,50 @@
-.sect_controller {
-  color: #0026ff;
+* {
+  margin: 0;
+  padding: 0;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  font-family: "Noto Sans KR", sans-serif;
+  font-weight: 400;
+  letter-spacing: -0.5px;
+  color: #353B47;
+}
+
+body {
+  background-color: #F6F6FB;
+  overflow: hidden;
+}
+
+.page_index {
+  width: 100vw;
+  margin: auto;
+}
+
+.sect_table {
+  width: 100%;
+}
+.sect_table .table_1 {
+  width: 90%;
+  max-width: 100vw;
+  margin: auto;
+  border: #D0D3E2 solid 1px;
+  border-collapse: collapse;
+}
+.sect_table .table_1 th, .sect_table .table_1 td {
+  border: #D0D3E2 solid 1px;
+}
+.sect_table .table_1 .week {
+  height: 16px;
+  font-size: 10px;
+  color: #75787b;
+}
+.sect_table .table_1 .period {
+  width: 16px;
+  font-size: 10px;
+  vertical-align: top;
+  color: #75787b;
+}
+.sect_table .table_1 .time_block {
+  height: 30px;
 }
 
 /*# sourceMappingURL=gogo_shooshook.css.map */
