@@ -1,3 +1,20 @@
+::-webkit-scrollbar {
+  width: 5px;
+  margin-left: 10px;
+  z-index: 9999;
+}
+
+::-webkit-scrollbar-track {
+  background-color: none;
+  z-index: 9999;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: none;
+  border-radius: 50px;
+  z-index: 9999;
+}
+
 .blue {
   background: linear-gradient(180deg, #4773E4 12.77%, rgba(71, 115, 228, 0.03) 131.05%);
 }
@@ -57,29 +74,32 @@ body {
 }
 
 .page_index {
-  width: 100vw;
+  width: 100%;
   margin: 56px auto 0px auto;
   overflow: hidden;
+  min-width: 300px;
+  max-width: 500px;
 }
 
 .sect_table {
-  width: 90%;
+  position: relative;
+  margin-top: 46px;
+  width: 100%;
   margin: auto;
   border-radius: 10px;
   background-color: #FFF;
   border: #e4e5eb solid 0.7px;
-  width: fit-content;
-  position: relative;
-  height: 300px;
+  height: 200px;
   overflow-y: scroll;
   margin-top: 10px;
+  -webkit-overflow-scrolling: touch;
 }
 .sect_table .table_1 {
+  position: absolute;
   width: 100%;
   border-collapse: collapse;
   border-radius: 10px;
   table-layout: fixed;
-  width: fit-content;
 }
 .sect_table .table_1 td {
   border-left: #e4e5eb solid 0.7px;
@@ -93,7 +113,7 @@ body {
   font-size: 10px;
   color: #a7abaf;
   border-left: #e4e5eb solid 0.7px;
-  width: 66px;
+  width: 100%;
 }
 .sect_table .table_1 .period {
   width: 16px;
@@ -103,17 +123,29 @@ body {
 }
 .sect_table .table_1 .time_block {
   height: 30px;
-  width: 66px;
+  width: 100%;
 }
 
 .lecture_container {
   position: absolute;
   left: 16px;
   top: 16px;
+  left: 0;
+  top: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  padding-left: 16px;
+  padding-top: 16px;
+}
+.lecture_container .tmp_container {
+  position: relative;
+  width: 100%;
 }
 .lecture_container .lecture {
-  width: 66px;
   position: absolute;
+  width: 20%;
+  box-sizing: border-box;
 }
 .lecture_container .lecture:hover {
   cursor: pointer;
@@ -314,19 +346,19 @@ body {
   top: 900px;
 }
 .lecture_container .x_mon {
-  left: 0px;
+  left: 0%;
 }
 .lecture_container .x_tue {
-  left: 66px;
+  left: 20%;
 }
 .lecture_container .x_wed {
-  left: 132px;
+  left: 40%;
 }
 .lecture_container .x_thr {
-  left: 198px;
+  left: 60%;
 }
 .lecture_container .x_fri {
-  left: 264px;
+  left: 80%;
 }
 
 .resizer {
@@ -347,7 +379,14 @@ body {
 }
 
 .sect_controller {
-  padding: 30px 16px;
+  padding: 0px 16px;
+  width: 100%;
+  padding: -16px;
+  margin-top: 35px;
+  overflow-y: scroll;
+  height: 600px;
+  overflow-x: hidden;
+  padding-bottom: 350px;
 }
 .sect_controller .subject {
   border: none;
@@ -362,18 +401,100 @@ body {
   display: flex;
   gap: 6px;
 }
+.sect_controller .color_container .color_selected {
+  display: none;
+}
 .sect_controller .color_container .color_select {
   display: inline-block;
   width: 40px;
   height: 40px;
-  border-radius: 50px;
+  border-radius: 5px;
   margin-top: 20px;
 }
 .sect_controller .color_container .color_select.selected {
-  box-shadow: 0px 0px 0px 1px #3056DE inset;
+  box-shadow: 0px 0px 0px 2px #3056DE inset;
 }
 .sect_controller .color_container .color_select:hover {
   cursor: pointer;
+}
+.sect_controller .cards_plusbtn_pack .cards_container {
+  margin-top: 20px;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card {
+  position: relative;
+  margin: auto;
+  margin-top: 10px;
+  width: 100%;
+  background-color: #FFF;
+  padding: 13px 9px;
+  border-radius: 5px;
+  border: 1px solid #D6D5D8;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .btn_x {
+  position: absolute;
+  right: 6px;
+  top: 8px;
+  width: 20px;
+  height: 20px;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .sect_time select {
+  font-size: 16px;
+  background-color: none;
+  border: none;
+  padding-right: 20px;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .sect_time select:hover {
+  cursor: pointer;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .sect_time select:focus {
+  outline: none;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .sect_time .room {
+  background-color: none;
+  border: none;
+  outline: none;
+  font-size: 14px;
+  margin-top: 5px;
+  margin-left: 5px;
+  color: #3056DE;
+  font-weight: 500;
+}
+.sect_controller .cards_plusbtn_pack .cards_container .card .sect_time .room::placeholder {
+  color: #A4B8FF;
+}
+.sect_controller .cards_plusbtn_pack .plus_btn {
+  width: 100%;
+  padding: 16px;
+  border: 1px solid #D6D5D8;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 10px;
+  border-radius: 5px;
+}
+.sect_controller .cards_plusbtn_pack .plus_btn img {
+  width: 26px;
+  height: 26px;
+  margin: auto;
+}
+
+.sect_bottom {
+  height: 80px;
+  width: 100%;
+  background-color: #F6F6FB;
+  color: white;
+  position: fixed;
+  bottom: 0;
+  padding: 10px 16px;
+}
+.sect_bottom .add_lecture {
+  width: 100%;
+  height: 50px;
+  background-color: #3056DE;
+  color: white;
+  font-size: 18px;
+  font-weight: 700;
+  border-radius: 5px;
 }
 
 /*# sourceMappingURL=gogo_shooshook.css.map */

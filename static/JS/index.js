@@ -34,7 +34,7 @@ $(document).ready(function() {
 
     function resize(e) {
         const newHeight = e.originalEvent.touches[0].clientY - initialHeight;
-        if (newHeight >= 50 && newHeight<=500) { // You can adjust this minimum height
+        if (newHeight >= 20 && newHeight<=450) { // You can adjust this minimum height
             table.height(newHeight);
         }
     }
@@ -46,3 +46,9 @@ $(document).ready(function() {
         $(document).off('touchend', stopResize);
     }
 });
+
+function clicked_color(self){
+    $(".color_select").removeClass("selected");
+    $(self).addClass("selected");
+    $(".color_selected").val($(self).data("color"));
+}

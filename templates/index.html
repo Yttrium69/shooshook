@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <script  src="http://code.jquery.com/jquery-latest.min.js"></script>
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
     <link href="../static/CSS/gogo_shooshook.css" rel="stylesheet">
     <script src="../static/JS/index.js"></script>
     <title>슈슉시간표</title>
@@ -15,45 +15,51 @@
     <span>슈슉시간표</span>
 </nav>
 <body>
-    <div class="page_index">
-        <div class="sect_table">
-            <table class="table_1">
-                <thead>
-                        <th class="period"></th>
-                        <th class="week">월</th>
-                        <th class="week">화</th>
-                        <th class="week">수</th>
-                        <th class="week">목</th>
-                        <th class="week">금</th>
-                </thead>
-                <tbody>
-                    {% for period in range(9, 18) %}
-                    <tr class="time_{{period}}_0  bottom_dash">
-                        <th rowspan="2" class=" period">{{period}}</th>
-                        <td class="time_block bottom_dash mon"></td>
-                        <td class="time_block bottom_dash tue"></td>
-                        <td class="time_block bottom_dash wed"></td>
-                        <td class="time_block bottom_dash thr" ></td>
-                        <td class="time_block bottom_dash fri"></td>
-                    </tr>
-                    <tr class="time_{{period}}_1 upper_none">
-                        <td class="time_block upper_none mon"></td>
-                        <td class="time_block upper_none tue"></td>
-                        <td class="time_block upper_none wed"></td>
-                        <td class="time_block upper_none thr" ></td>
-                        <td class="time_block upper_none fri"></td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            <div class="lecture_container">
-                {% for lecture in lectures %}
-                <div onclick='if(confirm("{{lecture.subject}} 과목을 삭제합니다.")) {remove_subject(this)}' data-name="{{lecture.name}}" data-start="{{lecture.position_facs['y_factor']}}" data-end="{{lecture.position_facs['y_factor']+lecture.position_facs['y_factor']}}" class="{{lecture.name}} lecture {{lecture.color}} x_{{lecture.position_facs['x_factor']}} y_{{lecture.position_facs['y_factor']}} length_{{lecture.position_facs['length_factor']}}">
-                    <div class="subject">{{lecture.subject}}</div>
-                    <div class="room">{{lecture.room}}</div>
+    <div class="page_index ">
+        <div style="overflow-y: hidden; padding: 0px 16px;">
+            <div class="sect_table">
+                <table class="table_1">
+                    <thead>
+                            <th class="period"></th>
+                            <th class="week">월</th>
+                            <th class="week">화</th>
+                            <th class="week">수</th>
+                            <th class="week">목</th>
+                            <th class="week">금</th>
+                    </thead>
+                    <tbody>
+                        {% for period in range(9, 18) %}
+                        <tr class="time_{{period}}_0  bottom_dash">
+                            <th rowspan="2" class=" period">{{period}}</th>
+                            <td class="time_block bottom_dash mon"></td>
+                            <td class="time_block bottom_dash tue"></td>
+                            <td class="time_block bottom_dash wed"></td>
+                            <td class="time_block bottom_dash thr" ></td>
+                            <td class="time_block bottom_dash fri"></td>
+                        </tr>
+                        <tr class="time_{{period}}_1 upper_none">
+                            <td class="time_block upper_none mon"></td>
+                            <td class="time_block upper_none tue"></td>
+                            <td class="time_block upper_none wed"></td>
+                            <td class="time_block upper_none thr" ></td>
+                            <td class="time_block upper_none fri"></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <div class="lecture_container">
+                    <div class="tmp_container">
+                        {% for lecture in lectures %}
+                        <div onclick='if(confirm("{{lecture.subject}} 과목을 삭제합니다.")) {remove_subject(this)}' data-name="{{lecture.name}}" data-start="{{lecture.position_facs['y_factor']}}" data-end="{{lecture.position_facs['y_factor']+lecture.position_facs['y_factor']}}" class="{{lecture.name}} lecture {{lecture.color}} x_{{lecture.position_facs['x_factor']}} y_{{lecture.position_facs['y_factor']}} length_{{lecture.position_facs['length_factor']}}">
+                            <div class="subject">{{lecture.subject}}</div>
+                            <div class="room">{{lecture.room}}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+    
                 </div>
-                {% endfor %}
-            </div>
+        </div>
+        
         </div>
         <div id="resizer" class="resizer">
             <span class="resizer_icon"></span>
@@ -61,16 +67,97 @@
         <div class="sect_controller">
             <form>
                 <input maxlength="10" placeholder="수업 이름을 입력하세요." name="subject" class="subject">
-                {% set colors = ["blue", "coral", "purple", "green", "gray"] %}
+                {% set colors = [ "coral", "purple", "green", "gray"] %}
                 <div class="color_container">
+                    <input name="color_selected" class="color_selected" value="blue">
+                    <span onclick="clicked_color(this)" data-color="blue" class="selected blue color_select"></span>
                     {% for color in colors %}
-                    <span class="{{color}} color_select"></span>
+                    <span onclick="clicked_color(this)" data-color="{{color}}" class="{{color}} color_select"></span>
                     {% endfor %}
                 </div>
-                <div class="cards_container">
-
+                <div class="cards_plusbtn_pack">
+                    <div class="cards_container">
+                        <div class="card">
+                            <div class="time_room_pack">
+                                <div class="sect_time">
+                                    <select class="week">
+                                        {% set weeks = [{"week_name":"월요일", "value":"mon"}, {"week_name":"화요일", "value":"tue"}, {"week_name":"수요일", "value":"wed"}, {"week_name":"목요일", "value":"thr"},{"week_name":"금요일", "value":"fri"}] %}
+                                        {% for week in weeks %}
+                                            <option value="{{week['value']}}">{{week['week_name']}}</option>
+                                        {% endfor %}
+                                    </select>
+    
+                                    <select class="start_time">
+                                        {% for time in range(9, 19) %}
+                                            <option value="{{time}}_0">{{time}}:00</option>
+                                            <option value="{{time}}_1">{{time}}:30</option>
+                                        {% endfor %}
+    
+                                    </select>
+                                    <span>부터</span>
+                                    <select class="end_time">
+                                        {% for time in range(9, 19) %}
+                                            <option value="{{time}}_0">{{time}}:00</option>
+                                            <option value="{{time}}_1">{{time}}:30</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span>까지</span>
+                                    <div>
+                                        <input class="room" placeholder="장소를 입력하세요.">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {%for i in range(1)%}
+                        <div class="card">
+                            <img class="btn_x" src="../static/img/icons/icon_x.svg">
+                            <div class="time_room_pack">
+                                <div class="sect_time">
+                                    <select class="week">
+                                        {% set weeks = [{"week_name":"월요일", "value":"mon"}, {"week_name":"화요일", "value":"tue"}, {"week_name":"수요일", "value":"wed"}, {"week_name":"목요일", "value":"thr"},{"week_name":"금요일", "value":"fri"}] %}
+                                        {% for week in weeks %}
+                                            <option value="{{week['value']}}">{{week['week_name']}}</option>
+                                        {% endfor %}
+                                    </select>
+    
+                                    <select class="start_time">
+                                        {% for time in range(9, 19) %}
+                                            <option value="{{time}}_0">{{time}}:00</option>
+                                            <option value="{{time}}_1">{{time}}:30</option>
+                                        {% endfor %}
+    
+                                    </select>
+                                    <span>부터</span>
+                                    <select class="end_time">
+                                        {% for time in range(9, 19) %}
+                                            <option value="{{time}}_0">{{time}}:00</option>
+                                            <option value="{{time}}_1">{{time}}:30</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span>까지</span>
+                                    <div>
+                                        <input class="room" placeholder="장소를 입력하세요.">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                        
+                    </div>          
+                <div class="plus_btn">
+                    <img src="../static/img/icons/icon_plus.svg"></img>
                 </div>
+                </div>
+
             </form>
+        </div>
+        <div class="sect_bottom">
+            <div class="btn_container">
+                <button class="add_lecture">수업 추가하기</button>
+                <!-- <div>
+                    <span>저장</span>
+                </div> -->
+            </div>
         </div>
     </div>
     
