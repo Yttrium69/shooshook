@@ -3,7 +3,7 @@
 class Lecture:
     name = "None"
     subject = "과목명"
-    room = "강의실"
+    room = " "
     color = "blue"
 
     def __init__(self, name, id, subject, room, color, position_facs):

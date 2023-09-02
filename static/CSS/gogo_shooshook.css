@@ -90,7 +90,7 @@ body {
   border-radius: 10px;
   background-color: #FFF;
   border: #e4e5eb solid 0.7px;
-  height: 200px;
+  height: 450px;
   overflow-y: scroll;
   margin-top: 10px;
   -webkit-overflow-scrolling: touch;
@@ -138,6 +138,12 @@ body {
   height: 100%;
   padding-left: 16px;
   padding-top: 16px;
+}
+.lecture_container .lecture_gray {
+  position: absolute;
+  width: 20%;
+  box-sizing: border-box;
+  background-color: rgba(18, 27, 68, 0.3764705882);
 }
 .lecture_container .tmp_container {
   position: relative;
@@ -438,6 +444,9 @@ body {
   width: 20px;
   height: 20px;
 }
+.sect_controller .cards_plusbtn_pack .cards_container .card .btn_x:hover {
+  cursor: pointer;
+}
 .sect_controller .cards_plusbtn_pack .cards_container .card .sect_time select {
   font-size: 16px;
   background-color: none;
@@ -472,6 +481,10 @@ body {
   align-items: center;
   margin-top: 10px;
   border-radius: 5px;
+}
+.sect_controller .cards_plusbtn_pack .plus_btn:hover, .sect_controller .cards_plusbtn_pack .plus_btn:active {
+  cursor: pointer;
+  border-color: #3056DE;
 }
 .sect_controller .cards_plusbtn_pack .plus_btn img {
   width: 26px;
@@ -510,6 +523,9 @@ body {
   border: none;
   outline: none;
 }
+.sect_bottom .btn_container .add_lecture:hover {
+  cursor: pointer;
+}
 .sect_bottom .btn_container .btn_download {
   flex-shrink: 0;
   flex-grow: 1;
@@ -527,6 +543,9 @@ body {
 .sect_bottom .btn_container .btn_download img {
   width: 18px;
   height: 15px;
+}
+.sect_bottom .btn_container .btn_download:hover {
+  cursor: pointer;
 }
 
 /*# sourceMappingURL=gogo_shooshook.css.map */

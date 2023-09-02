@@ -89,7 +89,7 @@ body {
     border-radius: 10px;
     background-color: #FFF;
     border: $border_gray;
-    height: 200px;
+    height: 450px;
     overflow-y: scroll;
     margin-top: 10px;
     -webkit-overflow-scrolling: touch;
@@ -145,6 +145,13 @@ body {
     height: 100%;
     padding-left: $left_header_width;
     padding-top: $top_header_height;
+
+    .lecture_gray{
+        position: absolute;
+        width: 20%;
+        box-sizing: border-box;
+        background-color: #121b4460;
+    }
 
     .tmp_container{
         position: relative;
@@ -282,6 +289,9 @@ body {
                     top: 8px;
                     width: 20px;
                     height: 20px;
+                    &:hover{
+                        cursor: pointer;
+                    }
                 }
                 .sect_time{
                     select{
@@ -321,6 +331,11 @@ body {
             align-items: center;
             margin-top: 10px;
             border-radius: 5px;
+            &:hover, &:active{
+                cursor: pointer;
+                border-color: $blue;
+            }
+
             img{
                 width: 26px;
                 height: 26px;
@@ -358,6 +373,9 @@ body {
             border-radius: 5px;
             border: none;
             outline: none;
+            &:hover{
+                cursor: pointer;
+            }
         }
         .btn_download{
             flex-shrink: 0;
@@ -375,6 +393,9 @@ body {
             img{
                 width: 18px;
                 height: 15px;
+            }
+            &:hover{
+                cursor: pointer;
             }
         }
     }
