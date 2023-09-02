@@ -72,11 +72,13 @@ body {
 }
 
 .page_index {
+    position: relative;
     width: 100%;
     margin: $nav_height+10px auto 0px auto;
     overflow: hidden;
     min-width: 300px;
     max-width: 500px;
+    // background-color: #00D6A2;
 }
 
 .sect_table {
@@ -328,20 +330,53 @@ body {
     }
     }
 .sect_bottom{
+    position: fixed;
     height: 80px;
     width: 100%;
-    background-color: $background_gray;
     color: white;
-    position: fixed;
+    left: 0;
     bottom: 0;
     padding: 10px 16px;
-    .add_lecture{
+    background-color: $background_gray;
+    .btn_container{
         width: 100%;
-        height: 50px;
-        background-color: $blue;
-        color: white;
-        font-size: 18px;
-        font-weight: 700;
-        border-radius: 5px;
+        min-width: 300px;
+        max-width: 500px;
+        margin: auto;
+        display: flex;
+        flex-shrink: 0;
+        flex-grow: 1;
+        gap: 5px;
+
+        .add_lecture{
+            width: 100%;
+            height: 50px;
+            background-color: $blue;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 5px;
+            border: none;
+            outline: none;
+        }
+        .btn_download{
+            flex-shrink: 0;
+            flex-grow: 1;
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            box-sizing: border-box;
+            background-color: white;
+            border: 1px solid $blue;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            img{
+                width: 18px;
+                height: 15px;
+            }
+        }
     }
+
 }
