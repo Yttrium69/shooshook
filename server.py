@@ -11,7 +11,7 @@ lectures = lecture_list
 def index():
     for lecture in lectures:
         print(lecture)
-    return render_template("index.html", lectures = lectures)
+    return render_template("index.html", lectures = lectures, end_time = 22)
 
 
 

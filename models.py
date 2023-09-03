@@ -1,5 +1,3 @@
-
-
 class Lecture:
     name = "None"
     subject = "과목명"

@@ -28,7 +28,7 @@
                             <th class="week">금</th>
                     </thead>
                     <tbody>
-                        {% for period in range(9, 18) %}
+                        {% for period in range(9, end_time+1) %}
                         <tr class="time_{{period}}_0  bottom_dash">
                             <th rowspan="2" class=" period">{{period}}</th>
                             <td class="time_block bottom_dash mon"></td>
@@ -49,12 +49,12 @@
                 </table>
                 <div class="lecture_container">
                     <div class="tmp_container">
-                        {% for lecture in lectures %}
+                        <!-- {% for lecture in lectures %}
                         <div onclick='if(confirm("{{lecture.subject}} 과목을 삭제합니다.")) {remove_subject(this)}' data-name="{{lecture.name}}" data-start="{{lecture.position_facs['y_factor']}}" data-end="{{lecture.position_facs['y_factor']+lecture.position_facs['y_factor']}}" class="{{lecture.name}} lecture {{lecture.color}} x_{{lecture.position_facs['x_factor']}} y_{{lecture.position_facs['y_factor']}} length_{{lecture.position_facs['length_factor']}}">
                             <div class="subject">{{lecture.subject}}</div>
                             <div class="room">{{lecture.room}}</div>
                         </div>
-                        {% endfor %}
+                        {% endfor %} -->
                         <div class="lecture_gray_container">
                             <div class="length_3 lecture_gray y_2 x_mon gray_lecture_1"></div>
                         </div>
@@ -70,7 +70,7 @@
         </div>
         <div class="sect_controller">
             <form>
-                <input maxlength="10" placeholder="수업 이름을 입력하세요." name="subject" class="subject">
+                <input maxlength="10" required placeholder="수업 이름을 입력하세요." name="subject" class="subject">
                 {% set colors = [ "coral", "purple", "green", "gray"] %}
                 <div class="color_container">
                     <input name="color_selected" class="color_selected" value="blue">
@@ -81,7 +81,7 @@
                 </div>
                 <div class="cards_plusbtn_pack">
                     <div class="cards_container">
-                        <div class="card">
+                        <div class="card" data-lecture_id='lecture_1'>
                             <input  style="display: none;"  data-week="mon" data-start_time="9_0" data-end_time="10_0" data-room=" " data-lecture_id='lecture_1' class="data_input_lecture_1">
                             <img onclick="clicked_card_x(this)" class="btn_x" src="../static/img/icons/icon_x.svg">
                             <div class="time_room_pack">
@@ -94,22 +94,23 @@
                                     </select>
     
                                     <select onchange="changed_card_start_time(this)" data-lecture_id='lecture_1' class="start_time">
-                                        {% for time in range(9, 19) %}
+                                        {% for time in range(9, 18) %}
                                             <option value="{{time}}_0">{{time}}:00</option>
                                             <option value="{{time}}_1">{{time}}:30</option>
                                         {% endfor %}
-    
+                                        <option value="18_0">18:00</option>
                                     </select>
                                     <span>부터</span>
                                     <select onchange="changed_card_end_time(this)" data-lecture_id='lecture_1' class="end_time">
-                                        {% for time in range(10, 19) %}
+                                        {% for time in range(9, 18) %}
                                             <option value="{{time}}_0">{{time}}:00</option>
                                             <option value="{{time}}_1">{{time}}:30</option>
                                         {% endfor %}
+                                            <option value="18_0">18:00</option>
                                     </select>
                                     <span>까지</span>
                                     <div>
-                                        <input class="room" placeholder="장소를 입력하세요.">
+                                        <input onchange="changed_card_room(this)" class="room" data-lecture_id='lecture_1' placeholder="장소를 입력하세요.">
                                     </div>
                                 </div>
                             </div>
@@ -128,7 +129,7 @@
                 <div class="btn_download">
                     <img src="../static/img/icons/icon_download.svg">
                 </div>
-                <button class="add_lecture">수업 추가하기</button>
+                <button onclick="clicked_submit_btn(this)" class="add_lecture">수업 추가하기</button>
             </div>
         </div>
     </div>
