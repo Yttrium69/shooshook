@@ -1,14 +1,40 @@
 class Lecture{
-    constructor(lecture_id, subject_id, room, start_time, end_time, week){
+    constructor(lecture_id, subject_id, room = "None", start_time = "9_0", end_time = "10_0", week = "mon"){
         this.lecture_id = lecture_id;
         this.subject_id = subject_id;
         this.room = room;
+        this.end_time = end_time;
+        this.start_time = start_time;
+        this.week = week;
         this.position_facs = {
             x_factor : `x_${this.make_x_factor(week)}`,
             y_factor : `y_${this.make_y_factor(start_time)}`,
             length_factor : `length_${this.make_length_factor(start_time, end_time)}`
         };
     }
+
+    move_gray(){
+        this.remove_me_from_table_gray();
+        this.post_me_in_table_gray();
+    }
+
+    update_week(_week){
+        this.week = _week;
+        this.position_facs.x_factor = this.make_length_factor(_week);
+        this.move_gray();
+    }
+    update_start_time(_start_time){
+        this.start_time = _start_time;
+        this.position_facs.y_factor = this.make_y_factor(_start_time);
+        this.position_facs.length_factor = this.make_length_factor(_start_time, this.end_time);
+        this.move_gray();
+    }
+    update_end_time(_end_time){
+        this.end_time = _end_time;
+        this.position_facs.length_factor = this.make_length_factor(this.start_time, _end_time);
+        this.move_gray();
+    }
+
 
     make_length_factor(start_time, end_time){
         const length_factor = ((parseInt(end_time.split("_")[0])-parseInt(start_time.split("_")[0]))*2 + (parseInt(end_time.split("_")[1])-parseInt(start_time.split("_")[1])));
@@ -34,229 +60,10 @@ class Lecture{
     remove(){
         remove_me_from_table_gray();
     }
-}   
-
-class Subject{
-    constructor(subject_id, name, color){
-        this.subject_id = final_subject_list.new_subject_id();
-        this.name = name;
-        this.color = color;
-        this.lecture_list = [];
-    }
-    new_lecture_id(){
-        return `lecture_${this.lecture_list.length + 1}`;
-    }
-    append_lecture(lecture){
-        this.lecture_list.push(lecture);
-    }
-    idx_of(lecture_id){
-        if (this.is_empty) return -1;
-        for(let i = 0; i<this.lecture_list.length;i++){
-            if(this.lecture_list[i].lecture_id == lecture_id){
-                return i;
-            }
-        }
-        return -1;
-    }
-    is_empty(){
-        if(this.lecture_list.length == 0) return true;
-        else return false;
-    }
-    remove_lecture(lecture_id){
-        if(this.is_empty()) return -1;
-        this.lecture_list.erase(this.idx_of(lecture_id));
-    }
-    post_me_in_table(){
-        let name = this.name;
-        let color = this.color;
-        let subject_id = this.subject_id;
-        console.log(this.lecture_list);
-        this.lecture_list.forEach(function(lecture){
-
-            const lecture_block = $(
-                `<div onclick='if(confirm("${name} 과목을 삭제합니다.")) {remove_subject(this)}' 
-                data-name="${name}" 
-                data-start="${lecture.position_facs.y_factor}" 
-                data-end="${lecture.position_facs.y_factor + lecture.position_facs.length_factor}" 
-                class="${subject_id} lecture ${color} ${lecture.position_facs.x_factor} ${lecture.position_facs.y_factor} ${lecture.position_facs.length_factor}">
-                    <div class="subject">${name}</div>
-                    <div class="room">${lecture.room}</div>
-                </div>`
-            );
-            $(".lecture_container .tmp_container").prepend(lecture_block);
-            lecture.remove_me_from_table_gray();
-        })
-    }
-    remove_me_from_table(){
-        const name = $(self).data("name");
-        let targets_to_remove = $(`.${name}`)
-        targets_to_remove.each(function(index, item){
-            $(item).remove();
-        })
-    }
-}
-
-class Subjects{
-    constructor(){
-        this.times = {
-            mon:[], tue:[], wed:[], thr:[], fri:[]
-        }
-        this.subject_list = [];
-    }
-    push_to_times_arr(Subject){
-        let times = this.times;
-        Subject.lecture_list.forEach(function(lecture){
-            let week = lecture.position_facs.x_factor.split("_")[1];
-            let start_time = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
-            let end_time = start_time + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`)-1;
-            times[week].push({"lecture_id":lecture.lecture_id,"start":start_time, "end":end_time});
-        })
-    }
-    remove_from_times_arr(Subject){
-        let times = this.times;
-        Subject.lecture_list.forEach(function(lecture){
-            let week = lecture.position_facs.x_factor.split("_")[1];
-            for(let i = 0; i<times[week].length;i++){
-                if(times[week][i]['lecture_id'] == lecture.lecture_id){
-                    times[week].splice(i);
-                    console.log(`removed ${lecture} from ${times[week][i]}`);
-                }
-            }
-        })
-    }
-    remove_from_subject_list(Subject){
-        for(let i = 0; i<this.subject_list.length;i++){
-            if(this.subject_list[i].subject_id == Subject.subject_id){
-                this.subject_list.splice(i);
-            }
-        }
-    }
-
-    remove_subject(Subject){
-        Subject.remove_me_from_table();
-        remove_from_times_arr(Subject);
-        this.remove_from_subject_list(Subject);
-    }
-    append_subject(Subject){
-        Subject.post_me_in_table();
-        this.subject_list.push(Subject);
-        this.push_to_times_arr(Subject);
-    }
-    new_subject_id(){
-        return `subject_${this.subject_list.length + 1}`;
-    }
-    print(){
-        console.log(this.subject_list);
-    }
-    get_subject(subject_id){
-        for(let i;i<this.subject_list.length;i++){
-            if(this.subject_list[i].subject_id == subject_id){
-                return this.subject_list[i];
-            }
-        }
-        return -1;
-    }
-    is_colision(subject){
-        if(this.subject_list.length == 0) return false;
-        let is_colision_happend = false;
-        let times = this.times;
-
-        subject.lecture_list.forEach(function(lecture){
-            let week = lecture.position_facs.x_factor.split("_")[1];
-            let start = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
-            let end = start + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`);
-
-            times[week].forEach(function(time_pack){
-                if(time_pack.start<=start&&start<=time_pack.end){
-                    console.log(`${start}`);
-                    console.log(`${time_pack.start}`);
-                    console.log(`${time_pack.start}<=${start}<=${time_pack.end}`)
-                    is_colision_happend = true;
-                    return is_colision_happend;
-                }
-                if(time_pack.start<=end&&end<=time_pack.end){
-                    console.log("latter")
-                    console.log(`${time_pack.start}<=${end}<=${time_pack.end}`)
-                    is_colision_happend = true;
-                    return is_colision_happend;
-                }
-            })
-
-        })
-        return is_colision_happend;
-    }
-}
-
-let final_subject_list = new Subjects();
-
-function remove_subject(self){
-    const name = $(self).data("name");
-    let targets_to_remove = $(`.${name}`)
-    targets_to_remove.each(function(index, item){
-        $(item).remove();
-    })
-}
-
-$(document).ready(function() {
-    const resizer = $('#resizer');
-    const table = $('.sect_table');
-    let initialHeight = 0;
-
-    resizer.on('mousedown', function(e) {
-        initialHeight = e.clientY - table.height();
-
-        $(document).on('mousemove', resize_by_mouse);
-        $(document).on('mouseup', stopResize);
-    });
-
-    resizer.on('touchstart', function(e) {
-        initialHeight = e.originalEvent.touches[0].clientY - table.height();
-
-        $(document).on('touchmove', resize);
-        $(document).on('touchend', stopResize);
-    });
-
-    function resize_by_mouse(e){
-        const new_height = e.clientY;
-        if (new_height >= 50 && new_height<=500) {
-            table.height(new_height);
-        }
-    }
-
-    function resize(e) {
-        const newHeight = e.originalEvent.touches[0].clientY - initialHeight;
-        if (newHeight >= 20 && newHeight<=450) {
-            table.height(newHeight);
-        }
-    }
-
-    function stopResize() {
-        $(document).off('mousemove', resize_by_mouse);
-        $(document).off('mouseup', stopResize);
-        $(document).off('touchmove', resize);
-        $(document).off('touchend', stopResize);
-    }
-
-    append_card();
-});
-
-function clicked_color(self){
-    $(".color_select").removeClass("selected");
-    $(self).addClass("selected");
-    $(".color_selected").val($(self).data("color"));
-}
-
-function clicked_card_x(self){
-    remove_gray_lecture($(self).parent().data("lecture_id"));
-    $(self).parent().remove();
-    if($(".cards_container .card").length == 0){
-        append_card();
-    }
-}
-    function append_card(){
-        const lecture_id = new_lecture_id();
+    append_card(){
+        const lecture_id = this.lecture_id;
         const card = $(`<div class="card" data-lecture_id='${lecture_id}'>
-        <input  style="display: none;"  data-week="mon" data-start_time="9_0" data-end_time="10_0" data-room=" " data-lecture_id='lecture_1' class="data_input_${lecture_id}">
+        <input  style="display: none;"  data-week="mon" data-start_time="9_0" data-end_time="10_0" data-room=" " data-lecture_id='${lecture_id}' class="data_input_${lecture_id}">
         <img onclick="clicked_card_x(this)" class="btn_x" src="../static/img/icons/icon_x.svg">
         <div class="time_room_pack">
             <div class="sect_time">
@@ -345,9 +152,257 @@ function clicked_card_x(self){
             </div>
         </div>
     </div>`);
-    $(".cards_container").append(card);
-    append_gray_lecture(lecture_id, "x_mon", `y_${make_y_factor("9_0")}`, `length_${make_length_factor("9_0","10_0")}`);
     }
+}   
+
+class Subject{
+    constructor(subject_id, name = "None", color = "None"){
+        this.subject_id = final_subject_list.new_subject_id();
+        this.name = name;
+        this.color = color;
+        this.lecture_list = [];
+    }
+    new_lecture_id(){
+        return `lecture_${this.lecture_list.length + 1}`;
+    }
+    append_lecture(lecture){
+        this.lecture_list.push(lecture);
+        lecture.post_me_in_table_gray();
+        lecture.append_card();
+    }
+    idx_of(lecture_id){
+        if (this.is_empty) return -1;
+        for(let i = 0; i<this.lecture_list.length;i++){
+            if(this.lecture_list[i].lecture_id == lecture_id){
+                return i;
+            }
+        }
+        return -1;
+    }
+    get_lecture(lecture_id){
+        if(!lecture_id){
+            console.log("lecture id is undefined");
+            return;
+        }
+        return this.lecture_list[this.idx_of(lecture_id)];
+    }
+    is_empty(){
+        if(this.lecture_list.length == 0) return true;
+        else return false;
+    }
+    remove_lecture(lecture_id){
+        if(this.is_empty()) return -1;
+        this.get_lecture(lecture_id).remove_gray_lecture();
+        this.lecture_list.erase(this.idx_of(lecture_id));
+    }
+    post_me_in_table(){
+        let name = this.name;
+        let color = this.color;
+        let subject_id = this.subject_id;
+        console.log(this.lecture_list);
+        this.lecture_list.forEach(function(lecture){
+
+            const lecture_block = $(
+                `<div onclick='if(confirm("${name} 과목을 삭제합니다.")) {remove_subject(this)}' 
+                data-subject_id ="${this.subject_id}"
+                data-name="${name}" 
+                data-start="${lecture.position_facs.y_factor}" 
+                data-end="${lecture.position_facs.y_factor + lecture.position_facs.length_factor}" 
+                class="${subject_id} lecture ${color} ${lecture.position_facs.x_factor} ${lecture.position_facs.y_factor} ${lecture.position_facs.length_factor}">
+                    <div class="subject">${name}</div>
+                    <div class="room">${lecture.room}</div>
+                </div>`
+            );
+            $(".lecture_container .tmp_container").prepend(lecture_block);
+            lecture.remove_me_from_table_gray();
+        })
+    }
+    remove_me_from_table(){
+        let subject_id = this.subject_id;
+        $(`.${subject_id}`).remove();
+    }
+}
+
+class Subjects{
+    constructor(){
+        this.times = {
+            mon:[], tue:[], wed:[], thr:[], fri:[]
+        }
+        this.subject_list = [];
+    }
+    push_to_times_arr(Subject){
+        let times = this.times;
+        Subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            let start_time = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
+            let end_time = start_time + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`)-1;
+            times[week].push({"lecture_id":lecture.lecture_id,"start":start_time, "end":end_time});
+        })
+    }
+    remove_from_times_arr(_subject_id){
+        let Subject = get_subject(_subject_id);
+        let times = this.times;
+        Subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            for(let i = 0; i<times[week].length;i++){
+                if(times[week][i]['lecture_id'] == lecture.lecture_id){
+                    times[week].splice(i);
+                    console.log(`removed ${lecture} from ${times[week][i]}`);
+                }
+            }
+        })
+    }
+    remove_from_subject_list(_subject_id){
+        for(let i = 0; i<this.subject_list.length;i++){
+            if(this.subject_list[i].subject_id == _subject_id){
+                this.subject_list.splice(i);
+            }
+        }
+    }
+
+    remove_subject_from_table(_subject_id){
+        $(`.${_subject_id}`).remove();
+    }
+
+    remove_subject(_subject_id){
+        this.remove_subject_from_table(_subject_id);
+        this.remove_from_times_arr(_subject_id);
+        this.remove_from_subject_list(_subject_id);
+    }
+    append_subject(Subject){
+        Subject.post_me_in_table();
+        this.subject_list.push(Subject);
+        this.push_to_times_arr(Subject);
+    }
+    new_subject_id(){
+        return `subject_${this.subject_list.length + 1}`;
+    }
+    print(){
+        console.log(this.subject_list);
+    }
+    get_subject(subject_id){
+        for(let i;i<this.subject_list.length;i++){
+            if(this.subject_list[i].subject_id == subject_id){
+                return this.subject_list[i];
+            }
+        }
+        return -1;
+    }
+    is_colision(subject){
+        if(this.subject_list.length == 0) return false;
+        let is_colision_happend = false;
+        let times = this.times;
+
+        subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            let start = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
+            let end = start + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`);
+
+            times[week].forEach(function(time_pack){
+                if(time_pack.start<=start&&start<=time_pack.end){
+                    console.log(`${start}`);
+                    console.log(`${time_pack.start}`);
+                    console.log(`${time_pack.start}<=${start}<=${time_pack.end}`)
+                    is_colision_happend = true;
+                    return is_colision_happend;
+                }
+                if(time_pack.start<=end&&end<=time_pack.end){
+                    console.log("latter")
+                    console.log(`${time_pack.start}<=${end}<=${time_pack.end}`)
+                    is_colision_happend = true;
+                    return is_colision_happend;
+                }
+            })
+
+        })
+        return is_colision_happend;
+    }
+}
+
+let final_subject_list = new Subjects();
+let subject_node;
+
+function initiate(){
+    reset_form();
+    subject_node = new Subject(final_subject_list.new_subject_id());
+}
+
+function remove_subject(self){
+    // const name = $(self).data("name");
+    // let targets_to_remove = $(`.${name}`)
+    // targets_to_remove.each(function(index, item){
+    //     $(item).remove();
+    // })
+    const subject_id = $(self).data("subject_id");
+    final_subject_list.remove_subject(subject_id);
+}
+
+$(document).ready(function() {
+    initiate();
+    const resizer = $('#resizer');
+    const table = $('.sect_table');
+    let initialHeight = 0;
+
+    resizer.on('mousedown', function(e) {
+        initialHeight = e.clientY - table.height();
+
+        $(document).on('mousemove', resize_by_mouse);
+        $(document).on('mouseup', stopResize);
+    });
+
+    resizer.on('touchstart', function(e) {
+        initialHeight = e.originalEvent.touches[0].clientY - table.height();
+
+        $(document).on('touchmove', resize);
+        $(document).on('touchend', stopResize);
+    });
+
+    function resize_by_mouse(e){
+        const new_height = e.clientY;
+        if (new_height >= 50 && new_height<=500) {
+            table.height(new_height);
+        }
+    }
+
+    function resize(e) {
+        const newHeight = e.originalEvent.touches[0].clientY - initialHeight;
+        if (newHeight >= 20 && newHeight<=450) {
+            table.height(newHeight);
+        }
+    }
+
+    function stopResize() {
+        $(document).off('mousemove', resize_by_mouse);
+        $(document).off('mouseup', stopResize);
+        $(document).off('touchmove', resize);
+        $(document).off('touchend', stopResize);
+    }
+
+    append_lecture();
+});
+
+function clicked_color(self){
+    $(".color_select").removeClass("selected");
+    $(self).addClass("selected");
+    $(".color_selected").val($(self).data("color"));
+}
+
+function clicked_card_x(self){
+    // remove_gray_lecture($(self).parent().data("lecture_id"));
+    // $(self).parent().remove();
+    // if($(".cards_container .card").length == 0){
+    //     append_lecture();
+    // }
+    subject_node.remove_lecture($(self).parent().data("lecture_id"));
+    if($(".cards_container .card").length == 0){
+        append_lecture();
+    }
+}
+function append_lecture(){
+    let lecture_node = new Lecture(subject_node.new_lecture_id(), subject_node.subject_id);
+    const lecture_id = lecture_node.lecture_id;
+    subject_node.append_lecture(lecture_node);
+}
 
 function new_lecture_id(){
     const card_cnt = $(".card").length;
@@ -355,26 +410,23 @@ function new_lecture_id(){
 }
 
 function clicked_plus_btn(self){
-    append_card();
+    append_lecture();
 }
 
 function changed_card_week(self){
     const week = $(self).val();
     const lecture_id = $(self).data("lecture_id");
-    const data_input = $(`.data_input_${lecture_id}`);
+    // const data_input = $(`.data_input_${lecture_id}`);
     const start_time = data_input.data("start_time");
     const end_time = data_input.data("end_time");
-
-    change_data_input(lecture_id, data_key = "week", data_value = week);
-    move_gray_lecture( lecture_id, `length_${make_length_factor(start_time, end_time)}`, `y_${make_y_factor(start_time)}`, `x_${week}`);
+    subject_node.get_lecture(lecture_id).update_week(week);
 }
 
 function changed_card_start_time(self){
-
     const lecture_id = $(self).data("lecture_id");
     const data_input = $(`.data_input_${lecture_id}`);
-    change_data_input(lecture_id, "start_time", $(self).val());
-    const week = data_input.data("week");
+    // change_data_input(lecture_id, "start_time", $(self).val());
+    // const week = data_input.data("week");
     const start_time = data_input.data("start_time");
     const end_time = data_input.data("end_time");
     if(!is_valid_time(start_time, end_time)){
@@ -383,15 +435,15 @@ function changed_card_start_time(self){
         change_data_input(lecture_id, "start_time", "9_0");
         return;
     }
-    move_gray_lecture( lecture_id, `length_${make_length_factor(start_time, end_time)}`, `y_${make_y_factor(start_time)}`, `x_${week}`);
+    subject_node.get_lecture(lecture_id).update_start_time(start_time);
 }
 
 function changed_card_end_time(self){
 
     const lecture_id = $(self).data("lecture_id");
     const data_input = $(`.data_input_${lecture_id}`);
-    change_data_input(lecture_id, "end_time", $(self).val());
-    const week = data_input.data("week");
+    // change_data_input(lecture_id, "end_time", $(self).val());
+    // const week = data_input.data("week");
     const start_time = data_input.data("start_time");
     const end_time = data_input.data("end_time");
     if(!is_valid_time(start_time, end_time)){
@@ -400,7 +452,7 @@ function changed_card_end_time(self){
         change_data_input(lecture_id, "end_time", "10_0");
         return;
     }
-    move_gray_lecture( lecture_id, `length_${make_length_factor(start_time, end_time)}`, `y_${make_y_factor(start_time)}`, `x_${week}`);
+    subject_node.get_lecture(lecture_id).update_end_time(end_time);
 }
 
 function change_data_input(lecture_id, data_key, data_value){
@@ -410,7 +462,6 @@ function change_data_input(lecture_id, data_key, data_value){
         data_input.data(data_key, data_value);
         });
     $(document).on("ready", function(){    data_input.data(data_key, data_value);})
-
 }
 
 function make_length_factor(start_time, end_time){
@@ -451,38 +502,40 @@ function remove_gray_lecture(lecture_id){
     $(document).ready(function(){$(`.gray_${lecture_id}`).remove();});
 }
 
+
+
 function clicked_submit_btn(self){
-        if($(".subject_name").val() == false){
-            console.log(document.getElementsByClassName("subject_name"));
-            alert("수업 이름을 입력하세요.");
+    if($(".subject_name").val() == false){
+        console.log(document.getElementsByClassName("subject_name"));
+        alert("수업 이름을 입력하세요.");
+        return;
+    }
+    else{
+        // const subject_name = $(".subject_name").val();
+        // const color = $(".color_selected").val();
+        // const new_subject = new Subject(final_subject_list.new_subject_id(), subject_name, color);
+        // $(".card").each(function(card){
+        //     let card_obj = $(this);
+        //     console.log(card_obj)
+        //     let lecture_id = card_obj.data("lecture_id");
+        //     let week = get_lecture_data(lecture_id, "week");
+        //     let start_time = get_lecture_data(lecture_id, "start_time");
+        //     let end_time = get_lecture_data(lecture_id, "end_time");
+        //     let room = get_lecture_data(lecture_id, "room");
+
+        //     new_subject.append_lecture(new Lecture(new_subject.new_lecture_id(), new_subject.subject_id, room, start_time, end_time, week));
+        // });
+        if(final_subject_list.is_colision(new_subject)){
+            alert("수업시간이 서로 겹칩니다.");
             return;
         }
         else{
-            const subject_name = $(".subject_name").val();
-            const color = $(".color_selected").val();
-            const new_subject = new Subject(final_subject_list.new_subject_id(), subject_name, color);
-            $(".card").each(function(card){
-                let card_obj = $(this);
-                console.log(card_obj)
-                let lecture_id = card_obj.data("lecture_id");
-                let week = get_lecture_data(lecture_id, "week");
-                let start_time = get_lecture_data(lecture_id, "start_time");
-                let end_time = get_lecture_data(lecture_id, "end_time");
-                let room = get_lecture_data(lecture_id, "room");
-    
-                new_subject.append_lecture(new Lecture(new_subject.new_lecture_id(), new_subject.subject_id, room, start_time, end_time, week));
-            });
-            if(final_subject_list.is_colision(new_subject)){
-                alert("수업시간이 서로 겹칩니다.");
-                return;
-            }
-            else{
-                reset_form();
-                final_subject_list.append_subject(new_subject);
+            reset_form();
+            final_subject_list.append_subject(subject_node);
 
-                return;
-            }
+            return;
         }
+    }
 }
 
 function reset_form(){
@@ -492,8 +545,7 @@ function reset_form(){
     $(".color_select").removeClass("selected");
     $(".color_select.blue").addClass("selected");
     $(".color_selected").val("blue");
-    remove_all_cards();
-    append_card();
+    initiate();
 }
 
 function get_lecture_data(lecture_id, key){
