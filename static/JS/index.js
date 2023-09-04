@@ -7,9 +7,9 @@ class Lecture{
         this.start_time = start_time;
         this.week = week;
         this.position_facs = {
-            x_factor : `x_${this.make_x_factor(week)}`,
-            y_factor : `y_${this.make_y_factor(start_time)}`,
-            length_factor : `length_${this.make_length_factor(start_time, end_time)}`
+            "x_factor" : this.make_x_factor(week),
+            "y_factor" : this.make_y_factor(start_time),
+            "length_factor" : this.make_length_factor(start_time, end_time)
         };
     }
 
@@ -20,13 +20,14 @@ class Lecture{
 
     update_week(_week){
         this.week = _week;
-        this.position_facs.x_factor = this.make_length_factor(_week);
+        this.position_facs.x_factor = this.make_x_factor(_week);
         this.move_gray();
     }
     update_start_time(_start_time){
         this.start_time = _start_time;
         this.position_facs.y_factor = this.make_y_factor(_start_time);
         this.position_facs.length_factor = this.make_length_factor(_start_time, this.end_time);
+        console.log((this.position_facs))
         this.move_gray();
     }
     update_end_time(_end_time){
@@ -37,20 +38,21 @@ class Lecture{
 
 
     make_length_factor(start_time, end_time){
+        console.log(start_time);
         const length_factor = ((parseInt(end_time.split("_")[0])-parseInt(start_time.split("_")[0]))*2 + (parseInt(end_time.split("_")[1])-parseInt(start_time.split("_")[1])));
-        return length_factor;
+        return "length_"+length_factor;
     }
     
     make_y_factor(start_time){
-        console.log(start_time)
         const y_factor = (parseInt(start_time.split("_")[0])-9)*2 + (parseInt(start_time.split("_")[1])-0);
-        return y_factor;
+        return "y_"+y_factor;
     }
 
     make_x_factor(week){
-        return week;
+        return "x_"+week;
     }
     post_me_in_table_gray(){
+        console.log(this.position_facs)
         const gray_block = $(`<div class="${this.position_facs['length_factor']} lecture_gray ${this.position_facs['y_factor']} ${this.position_facs['x_factor']} gray_${this.lecture_id}"></div>`);
         $(".lecture_gray_container").append(gray_block);
     }
@@ -62,7 +64,7 @@ class Lecture{
     }
     append_card(){
         const lecture_id = this.lecture_id;
-        const card = $(`<div class="card" data-lecture_id='${lecture_id}'>
+        const card = $(`<div class="card ${lecture_id}" data-lecture_id='${lecture_id}'>
         <input  style="display: none;"  data-week="mon" data-start_time="9_0" data-end_time="10_0" data-room=" " data-lecture_id='${lecture_id}' class="data_input_${lecture_id}">
         <img onclick="clicked_card_x(this)" class="btn_x" src="../static/img/icons/icon_x.svg">
         <div class="time_room_pack">
@@ -152,15 +154,22 @@ class Lecture{
             </div>
         </div>
     </div>`);
-    }
-}   
 
+    $(`.cards_container`).append(card);
+}   
+}
 class Subject{
     constructor(subject_id, name = "None", color = "None"){
         this.subject_id = final_subject_list.new_subject_id();
         this.name = name;
         this.color = color;
         this.lecture_list = [];
+    }
+    update_name(_name){
+        this.name = _name;
+    }
+    update_color(_color){
+        this.color = _color;
     }
     new_lecture_id(){
         return `lecture_${this.lecture_list.length + 1}`;
@@ -171,8 +180,9 @@ class Subject{
         lecture.append_card();
     }
     idx_of(lecture_id){
-        if (this.is_empty) return -1;
+        if (this.is_empty()) return -1;
         for(let i = 0; i<this.lecture_list.length;i++){
+
             if(this.lecture_list[i].lecture_id == lecture_id){
                 return i;
             }
@@ -192,19 +202,19 @@ class Subject{
     }
     remove_lecture(lecture_id){
         if(this.is_empty()) return -1;
-        this.get_lecture(lecture_id).remove_gray_lecture();
-        this.lecture_list.erase(this.idx_of(lecture_id));
+        $(`.${lecture_id}`).remove();
+        (this.get_lecture(lecture_id)).remove_me_from_table_gray();
+        this.lecture_list.splice(this.idx_of(lecture_id));
+
     }
     post_me_in_table(){
         let name = this.name;
         let color = this.color;
         let subject_id = this.subject_id;
-        console.log(this.lecture_list);
         this.lecture_list.forEach(function(lecture){
-
             const lecture_block = $(
                 `<div onclick='if(confirm("${name} 과목을 삭제합니다.")) {remove_subject(this)}' 
-                data-subject_id ="${this.subject_id}"
+                data-subject_id ="${subject_id}"
                 data-name="${name}" 
                 data-start="${lecture.position_facs.y_factor}" 
                 data-end="${lecture.position_facs.y_factor + lecture.position_facs.length_factor}" 
@@ -270,6 +280,7 @@ class Subjects{
         this.remove_from_subject_list(_subject_id);
     }
     append_subject(Subject){
+        console.log(Subject)
         Subject.post_me_in_table();
         this.subject_list.push(Subject);
         this.push_to_times_arr(Subject);
@@ -323,7 +334,7 @@ let final_subject_list = new Subjects();
 let subject_node;
 
 function initiate(){
-    reset_form();
+    // reset_form();
     subject_node = new Subject(final_subject_list.new_subject_id());
 }
 
@@ -399,6 +410,7 @@ function clicked_card_x(self){
     }
 }
 function append_lecture(){
+
     let lecture_node = new Lecture(subject_node.new_lecture_id(), subject_node.subject_id);
     const lecture_id = lecture_node.lecture_id;
     subject_node.append_lecture(lecture_node);
@@ -416,19 +428,13 @@ function clicked_plus_btn(self){
 function changed_card_week(self){
     const week = $(self).val();
     const lecture_id = $(self).data("lecture_id");
-    // const data_input = $(`.data_input_${lecture_id}`);
-    const start_time = data_input.data("start_time");
-    const end_time = data_input.data("end_time");
     subject_node.get_lecture(lecture_id).update_week(week);
 }
 
 function changed_card_start_time(self){
     const lecture_id = $(self).data("lecture_id");
-    const data_input = $(`.data_input_${lecture_id}`);
-    // change_data_input(lecture_id, "start_time", $(self).val());
-    // const week = data_input.data("week");
-    const start_time = data_input.data("start_time");
-    const end_time = data_input.data("end_time");
+    const start_time = $(`.start_time`).val();
+    const end_time = $(`.end_time`).val();
     if(!is_valid_time(start_time, end_time)){
         alert("시작 시간을 종료시간 이후로 입력해 주세요.");
         $(".start_time").val("9_0");
@@ -441,11 +447,8 @@ function changed_card_start_time(self){
 function changed_card_end_time(self){
 
     const lecture_id = $(self).data("lecture_id");
-    const data_input = $(`.data_input_${lecture_id}`);
-    // change_data_input(lecture_id, "end_time", $(self).val());
-    // const week = data_input.data("week");
-    const start_time = data_input.data("start_time");
-    const end_time = data_input.data("end_time");
+    const start_time = $(`.start_time`).val();
+    const end_time = $(`.end_time`).val();
     if(!is_valid_time(start_time, end_time)){
         alert("시작 시간을 종료시간 이후로 입력해 주세요.");
         $(".end_time").val("10_0");
@@ -511,6 +514,7 @@ function clicked_submit_btn(self){
         return;
     }
     else{
+        console.log("GOGOGO")
         // const subject_name = $(".subject_name").val();
         // const color = $(".color_selected").val();
         // const new_subject = new Subject(final_subject_list.new_subject_id(), subject_name, color);
@@ -525,13 +529,17 @@ function clicked_submit_btn(self){
 
         //     new_subject.append_lecture(new Lecture(new_subject.new_lecture_id(), new_subject.subject_id, room, start_time, end_time, week));
         // });
-        if(final_subject_list.is_colision(new_subject)){
+        if(final_subject_list.is_colision(subject_node)){
+
             alert("수업시간이 서로 겹칩니다.");
             return;
         }
         else{
-            reset_form();
+            console.log("GOGOGOGOGOGO")
+            subject_node.update_name($(".subject_name").val());
+            subject_node.update_color($(".color_selected").val());
             final_subject_list.append_subject(subject_node);
+            reset_form();
 
             return;
         }
@@ -545,7 +553,7 @@ function reset_form(){
     $(".color_select").removeClass("selected");
     $(".color_select.blue").addClass("selected");
     $(".color_selected").val("blue");
-    initiate();
+    // initiate();
 }
 
 function get_lecture_data(lecture_id, key){
