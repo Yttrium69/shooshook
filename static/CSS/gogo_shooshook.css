@@ -395,13 +395,13 @@ body {
   overflow-x: hidden;
   padding-bottom: 350px;
 }
-.sect_controller .subject {
+.sect_controller .subject_name {
   border: none;
   background: none;
   font-size: 24px;
   font-weight: 700;
 }
-.sect_controller .subject:focus {
+.sect_controller .subject_name:focus {
   outline: none;
 }
 .sect_controller .color_container {

@@ -3,7 +3,6 @@ class Lecture{
         this.lecture_id = lecture_id;
         this.subject_id = subject_id;
         this.room = room;
-        console.log(week);
         this.position_facs = {
             x_factor : `x_${this.make_x_factor(week)}`,
             y_factor : `y_${this.make_y_factor(start_time)}`,
@@ -25,7 +24,17 @@ class Lecture{
     make_x_factor(week){
         return week;
     }
-}
+    post_me_in_table_gray(){
+        const gray_block = $(`<div class="${this.position_facs['length_factor']} lecture_gray ${this.position_facs['y_factor']} ${this.position_facs['x_factor']} gray_${this.lecture_id}"></div>`);
+        $(".lecture_gray_container").append(gray_block);
+    }
+    remove_me_from_table_gray(){
+        $(`.gray_${this.lecture_id}`).remove();
+    }
+    remove(){
+        remove_me_from_table_gray();
+    }
+}   
 
 class Subject{
     constructor(subject_id, name, color){
@@ -57,23 +66,34 @@ class Subject{
         if(this.is_empty()) return -1;
         this.lecture_list.erase(this.idx_of(lecture_id));
     }
-    append_me_to_table(){
-        for(let target in this.lecture_list){
-            target = this.lecture_list[target];
+    post_me_in_table(){
+        let name = this.name;
+        let color = this.color;
+        let subject_id = this.subject_id;
+        console.log(this.lecture_list);
+        this.lecture_list.forEach(function(lecture){
+
             const lecture_block = $(
-                `<div onclick='if(confirm("${this.name} 과목을 삭제합니다.")) {remove_subject(this)}' 
-                data-name="${this.name}" 
-                data-start="${target.position_facs.y_factor}" 
-                data-end="${target.position_facs.y_factor + target.position_facs.length_factor}" 
-                class="${this.subject_id} lecture ${this.color} ${target.position_facs.x_factor} ${target.position_facs.y_factor} ${target.position_facs.length_factor}">
-                    <div class="subject">${this.name}</div>
-                    <div class="room">${target.room}</div>
+                `<div onclick='if(confirm("${name} 과목을 삭제합니다.")) {remove_subject(this)}' 
+                data-name="${name}" 
+                data-start="${lecture.position_facs.y_factor}" 
+                data-end="${lecture.position_facs.y_factor + lecture.position_facs.length_factor}" 
+                class="${subject_id} lecture ${color} ${lecture.position_facs.x_factor} ${lecture.position_facs.y_factor} ${lecture.position_facs.length_factor}">
+                    <div class="subject">${name}</div>
+                    <div class="room">${lecture.room}</div>
                 </div>`
             );
             $(".lecture_container .tmp_container").prepend(lecture_block);
-        }
+            lecture.remove_me_from_table_gray();
+        })
     }
-
+    remove_me_from_table(){
+        const name = $(self).data("name");
+        let targets_to_remove = $(`.${name}`)
+        targets_to_remove.each(function(index, item){
+            $(item).remove();
+        })
+    }
 }
 
 class Subjects{
@@ -83,8 +103,44 @@ class Subjects{
         }
         this.subject_list = [];
     }
+    push_to_times_arr(Subject){
+        let times = this.times;
+        Subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            let start_time = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
+            let end_time = start_time + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`)-1;
+            times[week].push({"lecture_id":lecture.lecture_id,"start":start_time, "end":end_time});
+        })
+    }
+    remove_from_times_arr(Subject){
+        let times = this.times;
+        Subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            for(let i = 0; i<times[week].length;i++){
+                if(times[week][i]['lecture_id'] == lecture.lecture_id){
+                    times[week].splice(i);
+                    console.log(`removed ${lecture} from ${times[week][i]}`);
+                }
+            }
+        })
+    }
+    remove_from_subject_list(Subject){
+        for(let i = 0; i<this.subject_list.length;i++){
+            if(this.subject_list[i].subject_id == Subject.subject_id){
+                this.subject_list.splice(i);
+            }
+        }
+    }
+
+    remove_subject(Subject){
+        Subject.remove_me_from_table();
+        remove_from_times_arr(Subject);
+        this.remove_from_subject_list(Subject);
+    }
     append_subject(Subject){
+        Subject.post_me_in_table();
         this.subject_list.push(Subject);
+        this.push_to_times_arr(Subject);
     }
     new_subject_id(){
         return `subject_${this.subject_list.length + 1}`;
@@ -103,24 +159,30 @@ class Subjects{
     is_colision(subject){
         if(this.subject_list.length == 0) return false;
         let is_colision_happend = false;
-        for(let i=0;i< subject.lecture_list.length;i++){
-            let target = subject.lecture_list[i];
-            console.log(subject.lecture_list[i])
-            let week = target.x_factor.split("_")[1];
-            let start = parseInt(`${target.y_factor.split("_")[0]}${target.y_factor.split("_")[1]}`);
-            let end = start + parseInt(`${target.length_factor.split("_")[0]}${target.length_factor.split("_")[1]}`);
+        let times = this.times;
 
-            for(gogo_time in this.times[week]){
-                if(gogo_time.start<=start<=gogo_time.end){
-                    is_colision = true;
-                    return is_colision;
+        subject.lecture_list.forEach(function(lecture){
+            let week = lecture.position_facs.x_factor.split("_")[1];
+            let start = parseInt(`${lecture.position_facs.y_factor.split("_")[1]}`);
+            let end = start + parseInt(`${lecture.position_facs.length_factor.split("_")[1]}`);
+
+            times[week].forEach(function(time_pack){
+                if(time_pack.start<=start&&start<=time_pack.end){
+                    console.log(`${start}`);
+                    console.log(`${time_pack.start}`);
+                    console.log(`${time_pack.start}<=${start}<=${time_pack.end}`)
+                    is_colision_happend = true;
+                    return is_colision_happend;
                 }
-                if(gogo_time.start<=end<=gogo_time.end){
-                    is_colision = true;
-                    return is_colision;
+                if(time_pack.start<=end&&end<=time_pack.end){
+                    console.log("latter")
+                    console.log(`${time_pack.start}<=${end}<=${time_pack.end}`)
+                    is_colision_happend = true;
+                    return is_colision_happend;
                 }
-            }
-        }
+            })
+
+        })
         return is_colision_happend;
     }
 }
@@ -174,6 +236,8 @@ $(document).ready(function() {
         $(document).off('touchmove', resize);
         $(document).off('touchend', stopResize);
     }
+
+    append_card();
 });
 
 function clicked_color(self){
@@ -388,29 +452,56 @@ function remove_gray_lecture(lecture_id){
 }
 
 function clicked_submit_btn(self){
-    const subject_name = $(".subject").val();
-    const color = $(".color_selected").val();
-    const new_subject = new Subject(final_subject_list.new_subject_id(), subject_name, color);
-    for(let i = 0;i<$(".card").length;i++){
-        let lecture_id = $($(".card")[i]).data("lecture_id");
-        let week = get_lecture_data(lecture_id, "week");
-        let start_time = get_lecture_data(lecture_id, "start_time");
-        let end_time = get_lecture_data(lecture_id, "end_time");
-        let room = get_lecture_data(lecture_id, "room");
-        const new_lecture = new Lecture(new_subject.new_lecture_id(), new_subject.subject_id, room, start_time, end_time, week);
-        new_subject.append_lecture(new_lecture);
-        if(final_subject_list.is_colision(new_subject) == false){
-
-            final_subject_list.append_subject(new_subject);
-            console.log(final_subject_list)
-            new_subject.append_me_to_table();
+        if($(".subject_name").val() == false){
+            console.log(document.getElementsByClassName("subject_name"));
+            alert("수업 이름을 입력하세요.");
+            return;
         }
-    }
+        else{
+            const subject_name = $(".subject_name").val();
+            const color = $(".color_selected").val();
+            const new_subject = new Subject(final_subject_list.new_subject_id(), subject_name, color);
+            $(".card").each(function(card){
+                let card_obj = $(this);
+                console.log(card_obj)
+                let lecture_id = card_obj.data("lecture_id");
+                let week = get_lecture_data(lecture_id, "week");
+                let start_time = get_lecture_data(lecture_id, "start_time");
+                let end_time = get_lecture_data(lecture_id, "end_time");
+                let room = get_lecture_data(lecture_id, "room");
+    
+                new_subject.append_lecture(new Lecture(new_subject.new_lecture_id(), new_subject.subject_id, room, start_time, end_time, week));
+            });
+            if(final_subject_list.is_colision(new_subject)){
+                alert("수업시간이 서로 겹칩니다.");
+                return;
+            }
+            else{
+                reset_form();
+                final_subject_list.append_subject(new_subject);
 
+                return;
+            }
+        }
+}
+
+function reset_form(){
+    $('form').each(function() {
+        this.reset();
+    });
+    $(".color_select").removeClass("selected");
+    $(".color_select.blue").addClass("selected");
+    $(".color_selected").val("blue");
+    remove_all_cards();
+    append_card();
 }
 
 function get_lecture_data(lecture_id, key){
     const data_input = $(`.data_input_${lecture_id}`);
     const value = data_input.data(key);
     return value;
+}
+
+function remove_all_cards(){
+    $(".cards_container").empty();
 }
